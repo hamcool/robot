@@ -1,5 +1,6 @@
 require 'minitest/autorun'
 require_relative 'table'
+require_relative 'robot'
 
 class RobotTest < Minitest::Test
 
@@ -56,6 +57,35 @@ class RobotTest < Minitest::Test
     
     # position should now be 0,4
     assert (@robot.reportPosition == "0,4,NORTH"), "robot position not the same after failed move."
+    
+    #check all facing positions
+    @robot.turnRight
+    assert (@robot.reportPosition == "0,4,EAST"), "robot turn right position does not equal EAST"
+    @robot.turnRight
+    assert (@robot.reportPosition == "0,4,SOUTH"), "robot turn right position does not equal SOUTH"
+    @robot.turnRight
+    assert (@robot.reportPosition == "0,4,WEST"), "robot turn right position does not equal WEST"
+    @robot.turnRight
+    assert (@robot.reportPosition == "0,4,NORTH"), "robot turn right position does not equal NORTH"
+    
+    
+    #check all facing positions
+    @robot.turnLeft
+    assert (@robot.reportPosition == "0,4,WEST"), "robot turn left position does not equal WEST"
+    @robot.turnLeft
+    assert (@robot.reportPosition == "0,4,SOUTH"), "robot turn left position does not equal SOUTH"
+    @robot.turnLeft
+    assert (@robot.reportPosition == "0,4,EAST"), "robot turn left position does not equal EAST"
+    @robot.turnLeft
+    assert (@robot.reportPosition == "0,4,NORTH"), "robot turn left position does not equal NORTH"
+    
+  end
+  
+  def test_robot_default
+    @robot = Robot.new
+    #place on table without co-ordinates and then check position is bottom of table
+    @robot.placeOnTable(@table)
+    assert (@robot.reportPosition == "0,0,NORTH"), "robot default position does not equal defaults"
   end
   
 end

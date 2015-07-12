@@ -7,8 +7,6 @@ class Table
 # 2 |_ _ _|
 # 1 |_ _ _|
 # 0 |_ _ _|
-
-
   
   def initialize(width=4,height=4)
     # can be initialised to any size. Defaults to 5 X 5 (index starts at 0)
