@@ -15,14 +15,24 @@ class Table
   end
   
   def validMove(start_x, start_y, direction, distance)
-    if direction == "N"
+    if direction == "NORTH"
       return start_y + distance <= @y_boundary
-    elsif direction == "S"
+    elsif direction == "SOUTH"
       return start_y - distance >= 0
-    elsif direction == "E"
+    elsif direction == "EAST"
       return start_x + distance <= @x_boundary
-    elsif direction == "W"
+    elsif direction == "WEST"
       return start_x - distance >= 0
     end
+  end
+  
+  def check_y_boundary(y)
+    return false if !@y_boundary
+    return (y <= @y_boundary && y >= 0)
+  end
+  
+  def check_x_boundary(x)
+    return false if !@x_boundary
+    return (x <= @x_boundary && x >= 0)
   end
 end

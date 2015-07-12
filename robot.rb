@@ -1,6 +1,12 @@
 class Robot
   
-  def placeOnTable(x=0,y=0,facing="N",table)
+  def placeOnTable(x=0,y=0,facing="NORTH",table)
+    # ignore placement if it is invalid.
+    return false if !table
+    return false if !table.check_x_boundary(x)
+    return false if !table.check_y_boundary(y)
+    return false if (facing != "NORTH" && facing != "EAST" && facing != "SOUTH" && facing != "WEST")
+    
     # default position is 0,0
     @table = table
     @x = x
@@ -12,46 +18,35 @@ class Robot
     @table ? true : false
   end
   
-  def
-    self.isPlaced? ? "#{@x},#{@y},#{direction}" : "Not Placed"
-  end
-  
-  def direction
-    if @facing == "N"
-      return "NORTH"
-    elsif @facing == "E"
-      return "EAST"
-    elsif @facing == "S"
-      return "SOUTH"
-    elsif @facing == "W"
-      return "WEST"
-    else
-      return "Not Placed"
-    end
-    
+  def reportPosition
+    self.isPlaced? ? "#{@x},#{@y},#{@facing}" : "Not Placed"
   end
   
   def turnRight
-    if @facing == "N"
-      @facing = "E"
-    elsif @facing == "E"
-      @facing = "S"
-    elsif @facing == "S"
-      @facing = "W"
-    elsif @facing == "W"
-      @facing = "N"
+    return false if !isPlaced?
+    
+    if @facing == "NORTH"
+      @facing = "EAST"
+    elsif @facing == "EAST"
+      @facing = "SOUTH"
+    elsif @facing == "SOUTH"
+      @facing = "WEST"
+    elsif @facing == "WEST"
+      @facing = "NORTH"
     end
   end
   
   def turnLeft
-    if @facing == "N"
-      @facing = "W"
-    elsif @facing == "E"
-      @facing = "N"
-    elsif @facing == "S"
-      @facing = "E"
-    elsif @facing == "W"
-      @facing = "S"
+    return false if !isPlaced?
+    
+    if @facing == "NORTH"
+      @facing = "WEST"
+    elsif @facing == "EAST"
+      @facing = "NORTH"
+    elsif @facing == "SOUTH"
+      @facing = "EAST"
+    elsif @facing == "WEST"
+      @facing = "SOUTH"
     end
   end
   
@@ -59,13 +54,13 @@ class Robot
     return false if !isPlaced?
     return false if !@table.validMove(@x, @y, @facing, 1)
     # if pass checks then update position.
-    if @facing == "N"
+    if @facing == "NORTH"
       @y += 1
-    elsif @facing == "S"
+    elsif @facing == "SOUTH"
       @y -= 1
-    elsif @facing == "E"
+    elsif @facing == "EAST"
       @x += 1
-    elsif @facing == "W"
+    elsif @facing == "WEST"
       @x -= 1
     end
   end

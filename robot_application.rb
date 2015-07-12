@@ -1,34 +1,16 @@
 require_relative 'robot'
 require_relative 'table'
-
-class RobotApplication
- def initialize
-   @table = Table.new
-   @robot = Robot.new
- end
- 
- def robotPlaced?
-    return @robot.isPlaced?
- end
- 
- def getRobotPosition
-    return @robot.reportPosition?
- end
-end
-
+require_relative 'robot_controller'
 
 app = RobotApplication.new
 
 ARGF.each_with_index do |line, idx|
- # process commands.....
+  # process commands.....
+  app.process_instruction(line.chomp)
 end
 
 if !app.robotPlaced?
-  puts "Robot not placed - check file for correct robot insturctions"
+  puts "Robot not placed - check file has correct robot insturctions"
 else
-  puts "Output: " + app.getRobotPosition
+  puts "Robot finished moving"
 end
-
-
-
-

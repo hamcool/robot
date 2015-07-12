@@ -1,7 +1,7 @@
 require 'minitest/autorun'
-require_relative 'table'
 require_relative 'robot'
-require_relative 'robot_application'
+require_relative 'table'
+require_relative 'robot_controller'
 
 class RobotTest < Minitest::Test
 
@@ -13,28 +13,28 @@ class RobotTest < Minitest::Test
 
   def test_table_default_boundaries
     # check can move north if not going past edge
-    assert @table.validMove(0,0,"N",1), "fail should be in bounds moving north"
+    assert @table.validMove(0,0,"NORTH",1), "fail should be in bounds moving north"
     # check is out of bounds if move north over edge
-    assert !@table.validMove(0,4,"N",1), "fail should be out of bounds moving north"
+    assert !@table.validMove(0,4,"NORTH",1), "fail should be out of bounds moving north"
     # check can move west if not going past edge
-    assert @table.validMove(1,0,"W",1), "fail should be in bounds moving west"
+    assert @table.validMove(1,0,"WEST",1), "fail should be in bounds moving west"
     # check can move north if not going past edge
-    assert !@table.validMove(0,0,"W",1), "fail should be out of bounds moving west"
+    assert !@table.validMove(0,0,"WEST",1), "fail should be out of bounds moving west"
     # check can move south if not going past edge
-    assert @table.validMove(0,1,"S",1), "fail should be in bounds moving south"
+    assert @table.validMove(0,1,"SOUTH",1), "fail should be in bounds moving south"
     # check is out of bounds if move south over edge
-    assert !@table.validMove(0,0,"S",1), "fail should be out of bounds moving south"
+    assert !@table.validMove(0,0,"SOUTH",1), "fail should be out of bounds moving south"
     # check can move east if not going past edge
-    assert @table.validMove(0,0,"E",1), "fail should be in bounds moving east"
+    assert @table.validMove(0,0,"EAST",1), "fail should be in bounds moving east"
     # check is out of bounds if move east past edge
-    assert !@table.validMove(4,0,"E",1), "fail should be out of bounds moving east"
+    assert !@table.validMove(4,0,"EAST",1), "fail should be out of bounds moving east"
   end
   
   def test_robot
     #check robot not on table on initialisation
     assert !@robot.isPlaced?, "robot should not be isPlaced until it is placed"
     #place on table then check is placed
-    @robot.placeOnTable(0,0,"N", @table)
+    @robot.placeOnTable(0,0,"NORTH", @table)
     assert @robot.isPlaced?, "robot should isPlaced after being placed"
     # Check position
     assert (@robot.reportPosition == "0,0,NORTH"), "robot position does not equal where it was placed"
@@ -90,13 +90,18 @@ class RobotTest < Minitest::Test
     assert (@robot.reportPosition == "0,0,NORTH"), "robot default position does not equal defaults"
     
     #place on table with invalid co-ordinates and then if placed
-    @robot.placeOnTable(5,5,"N",@table)
-    assert (@robot.reportPosition == "0,0,NORTH"), "robot default position does not equal defaults"
+    @robot = Robot.new
+    @robot.placeOnTable(5,5,"NORTH",@table)
+    assert !@robot.isPlaced?, "robot should not be isPlaced with invalid co-ordinates"
     
+    #place on table with invalid co-ordinates and then if placed
+    @robot = Robot.new
+    @robot.placeOnTable(0,0,"XXXX",@table)
+    assert !@robot.isPlaced?, "robot should not be isPlaced with invalid direction"
   end
   
   def test_application
-    assert !@robot_app.robotPlaced? "Robot should not be placed prior to instructions being read"
+    assert !@robot_app.robotPlaced?, "Robot should not be placed prior to instructions being read"
     # simulate file insturction read...
     array = [ "PLACE 1,2,EAST",
               "MOVE",
@@ -104,22 +109,20 @@ class RobotTest < Minitest::Test
               "LEFT",
               "MOVE",
               "REPORT"]
-  
+              
     array.each_with_index do |line, idx|
       @robot_app.process_instruction(line)
     end
-    
     assert (@robot_app.getRobotPosition == "3,3,NORTH"), "robot position not correct after test application run"
     
     #check invalid placement, and that subsequent moves ignored
     @robot_app = RobotApplication.new
-
     array = [ "PLACE 5,5,EAST", "MOVE", "LEFT", "RIGHT", "REPORT"]
   
     array.each_with_index do |line, idx|
       assert !@robot_app.process_instruction(line), "process insturction should be ignored when robot not placed"
     end
-    assert !@robot_app.robotPlaced? "Robot should not be placed after invalide placement"
+    assert !@robot_app.robotPlaced?, "Robot should not be placed after invalid placement"
     
   end
   
