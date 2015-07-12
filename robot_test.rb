@@ -1,12 +1,14 @@
 require 'minitest/autorun'
 require_relative 'table'
 require_relative 'robot'
+require_relative 'robot_application'
 
 class RobotTest < Minitest::Test
 
   def setup
     @table = Table.new
     @robot = Robot.new
+    @robot_app = RobotApplication.new
   end
 
   def test_table_default_boundaries
@@ -81,11 +83,44 @@ class RobotTest < Minitest::Test
     
   end
   
-  def test_robot_default
+  def test_robot_placements
     @robot = Robot.new
     #place on table without co-ordinates and then check position is bottom of table
     @robot.placeOnTable(@table)
     assert (@robot.reportPosition == "0,0,NORTH"), "robot default position does not equal defaults"
+    
+    #place on table with invalid co-ordinates and then if placed
+    @robot.placeOnTable(5,5,"N",@table)
+    assert (@robot.reportPosition == "0,0,NORTH"), "robot default position does not equal defaults"
+    
+  end
+  
+  def test_application
+    assert !@robot_app.robotPlaced? "Robot should not be placed prior to instructions being read"
+    # simulate file insturction read...
+    array = [ "PLACE 1,2,EAST",
+              "MOVE",
+              "MOVE",
+              "LEFT",
+              "MOVE",
+              "REPORT"]
+  
+    array.each_with_index do |line, idx|
+      @robot_app.process_instruction(line)
+    end
+    
+    assert (@robot_app.getRobotPosition == "3,3,NORTH"), "robot position not correct after test application run"
+    
+    #check invalid placement, and that subsequent moves ignored
+    @robot_app = RobotApplication.new
+
+    array = [ "PLACE 5,5,EAST", "MOVE", "LEFT", "RIGHT", "REPORT"]
+  
+    array.each_with_index do |line, idx|
+      assert !@robot_app.process_instruction(line), "process insturction should be ignored when robot not placed"
+    end
+    assert !@robot_app.robotPlaced? "Robot should not be placed after invalide placement"
+    
   end
   
 end

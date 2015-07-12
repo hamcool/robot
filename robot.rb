@@ -1,5 +1,5 @@
 class Robot
-
+  
   def placeOnTable(x=0,y=0,facing="N",table)
     # default position is 0,0
     @table = table
@@ -12,7 +12,7 @@ class Robot
     @table ? true : false
   end
   
-  def reportPosition
+  def
     self.isPlaced? ? "#{@x},#{@y},#{direction}" : "Not Placed"
   end
   
