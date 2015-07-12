@@ -6,7 +6,7 @@ app = RobotApplication.new
 
 ARGF.each_with_index do |line, idx|
   # process commands.....
-  app.process_instruction(line.chomp)
+  app.process_instruction(line.strip)
 end
 
 if !app.robotPlaced?

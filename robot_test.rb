@@ -3,7 +3,13 @@ require_relative 'robot'
 require_relative 'table'
 require_relative 'robot_controller'
 
+
+
 class RobotTest < Minitest::Test
+  NORTH = "NORTH"
+  SOUTH = "SOUTH"
+  EAST = "EAST"
+  WEST = "WEST"
 
   def setup
     @table = Table.new
@@ -13,28 +19,28 @@ class RobotTest < Minitest::Test
 
   def test_table_default_boundaries
     # check can move north if not going past edge
-    assert @table.validMove(0,0,"NORTH",1), "fail should be in bounds moving north"
+    assert @table.validMove(0,0,NORTH,1), "fail should be in bounds moving north"
     # check is out of bounds if move north over edge
-    assert !@table.validMove(0,4,"NORTH",1), "fail should be out of bounds moving north"
+    assert !@table.validMove(0,4,NORTH,1), "fail should be out of bounds moving north"
     # check can move west if not going past edge
-    assert @table.validMove(1,0,"WEST",1), "fail should be in bounds moving west"
+    assert @table.validMove(1,0,WEST,1), "fail should be in bounds moving west"
     # check can move north if not going past edge
-    assert !@table.validMove(0,0,"WEST",1), "fail should be out of bounds moving west"
+    assert !@table.validMove(0,0,WEST,1), "fail should be out of bounds moving west"
     # check can move south if not going past edge
-    assert @table.validMove(0,1,"SOUTH",1), "fail should be in bounds moving south"
+    assert @table.validMove(0,1,SOUTH,1), "fail should be in bounds moving south"
     # check is out of bounds if move south over edge
-    assert !@table.validMove(0,0,"SOUTH",1), "fail should be out of bounds moving south"
+    assert !@table.validMove(0,0,SOUTH,1), "fail should be out of bounds moving south"
     # check can move east if not going past edge
-    assert @table.validMove(0,0,"EAST",1), "fail should be in bounds moving east"
+    assert @table.validMove(0,0,EAST,1), "fail should be in bounds moving east"
     # check is out of bounds if move east past edge
-    assert !@table.validMove(4,0,"EAST",1), "fail should be out of bounds moving east"
+    assert !@table.validMove(4,0,EAST,1), "fail should be out of bounds moving east"
   end
   
   def test_robot
     #check robot not on table on initialisation
     assert !@robot.isPlaced?, "robot should not be isPlaced until it is placed"
     #place on table then check is placed
-    @robot.placeOnTable(0,0,"NORTH", @table)
+    @robot.placeOnTable(0,0,NORTH, @table)
     assert @robot.isPlaced?, "robot should isPlaced after being placed"
     # Check position
     assert (@robot.reportPosition == "0,0,NORTH"), "robot position does not equal where it was placed"
@@ -91,7 +97,7 @@ class RobotTest < Minitest::Test
     
     #place on table with invalid co-ordinates and then if placed
     @robot = Robot.new
-    @robot.placeOnTable(5,5,"NORTH",@table)
+    @robot.placeOnTable(5,5,NORTH,@table)
     assert !@robot.isPlaced?, "robot should not be isPlaced with invalid co-ordinates"
     
     #place on table with invalid co-ordinates and then if placed
@@ -123,7 +129,5 @@ class RobotTest < Minitest::Test
       assert !@robot_app.process_instruction(line), "process insturction should be ignored when robot not placed"
     end
     assert !@robot_app.robotPlaced?, "Robot should not be placed after invalid placement"
-    
   end
-  
 end
